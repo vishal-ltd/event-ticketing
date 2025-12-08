@@ -72,3 +72,22 @@ A comprehensive full-stack event ticketing solution built with Next.js 14, Supab
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🚀 Deployment
+
+### Deploy to Vercel
+
+1. **Push your code to GitHub.**
+2. **Import the project in Vercel.**
+3. **Configure Environment Variables**:
+   Add the following variables in the Vercel Project Settings > Environment Variables:
+
+   | Variable | Description |
+   | :--- | :--- |
+   | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase Project URL |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase Anon Key |
+   | `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase Service Role Key |
+   | `RESEND_API_KEY` | Your Resend API Key |
+   | `NEXT_PUBLIC_SITE_URL` | A valid website URL (e.g. `https://your-project.vercel.app`) |
+
+4. **Deploy**: Click "Deploy" and wait for the build to complete.
