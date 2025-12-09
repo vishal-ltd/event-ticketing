@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { LayoutDashboard, Users, Calendar, IndianRupee, QrCode } from 'lucide-react'
+import { LayoutDashboard, Users, Calendar, IndianRupee, QrCode, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 export function AdminNavLinks() {
@@ -39,6 +39,12 @@ export function AdminNavLinks() {
                 <Link href="/admin/orders">
                     <IndianRupee className="mr-2 h-4 w-4" />
                     Orders
+                </Link>
+            </Button>
+            <Button variant="ghost" className="w-full justify-start" asChild>
+                <Link href="/admin/settings">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
                 </Link>
             </Button>
         </nav>

@@ -34,19 +34,19 @@ export async function deleteEvent(eventId: string) {
 
     const isAdmin = profile?.role === 'admin'
 
+    // Fetch event details to check ownership and get banner_url
+    const { data: event, error: eventError } = await supabase
+        .from('events')
+        .select('organizer_id, banner_url')
+        .eq('id', eventId)
+        .single()
+
+    if (eventError || !event) {
+        return { error: 'Event not found' }
+    }
+
     // If not admin, verify ownership
     if (!isAdmin) {
-        // Verify ownership
-        const { data: event, error: eventError } = await supabase
-            .from('events')
-            .select('organizer_id')
-            .eq('id', eventId)
-            .single()
-
-        if (eventError || !event) {
-            return { error: 'Event not found' }
-        }
-
         // Get organizer profile for this user
         const { data: organizer, error: organizerError } = await supabase
             .from('organizers')
@@ -75,19 +75,38 @@ export async function deleteEvent(eventId: string) {
     const orderIds = orders?.map(o => o.id) || []
 
     // 2. Delete payment proof files from storage
-    const filesToDelete = orders
+    const paymentProofsToDelete = orders
         ?.map(o => extractFileNameFromUrl(o.payment_screenshot_url))
         .filter((f): f is string => f !== null) || []
 
-    if (filesToDelete.length > 0) {
-
+    if (paymentProofsToDelete.length > 0) {
         const { error: storageError } = await adminClient.storage
             .from('payment_proofs')
-            .remove(filesToDelete)
+            .remove(paymentProofsToDelete)
 
         if (storageError) {
-            console.error('Error deleting payment proofs from storage:', storageError)
-            // Continue with deletion even if storage cleanup fails
+            console.error('Error deleting payment proofs:', storageError)
+        }
+    }
+
+    // 3. Delete event banner from storage
+    if (event.banner_url) {
+        try {
+            // URL format: {supabaseUrl}/storage/v1/object/public/event-banners/{filename}
+            const match = event.banner_url.match(/event-banners\/([^?]+)/)
+            const bannerFileName = match ? match[1] : null
+
+            if (bannerFileName) {
+                const { error: bannerResult } = await adminClient.storage
+                    .from('event-banners')
+                    .remove([bannerFileName])
+
+                if (bannerResult) {
+                    console.error('Error deleting event banner:', bannerResult)
+                }
+            }
+        } catch (e) {
+            console.error('Error parsing banner URL:', e)
         }
     }
 
@@ -105,13 +124,13 @@ export async function deleteEvent(eventId: string) {
             .eq('event_id', eventId)
     }
 
-    // 3. Delete seats
+    // 4. Delete seats
     await adminClient
         .from('seats')
         .delete()
         .eq('event_id', eventId)
 
-    // 4. Delete event
+    // 5. Delete event
     const { error } = await adminClient
         .from('events')
         .delete()

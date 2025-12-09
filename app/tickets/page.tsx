@@ -75,7 +75,7 @@ export default async function MyTicketsPage() {
                     <h3 className="text-lg font-medium mb-2">No tickets found</h3>
                     <p className="text-muted-foreground mb-6">You haven't booked any tickets yet.</p>
                     <Button asChild>
-                        <Link href="/events">Browse Events</Link>
+                        <Link href="/">Browse Events</Link>
                     </Button>
                 </div>
             ) : (

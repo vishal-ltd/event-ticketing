@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, Upload, CheckCircle } from 'lucide-react'
+import { Loader2, CheckCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { uploadPaymentProof } from '@/app/actions/payment'
@@ -21,7 +21,7 @@ interface EventData {
     title: string
 }
 
-export function PaymentUploadForm({ order, event }: { order: OrderData, event: EventData }) {
+export function PaymentUploadForm({ order, qrCodeUrl }: { order: OrderData, event: EventData, qrCodeUrl: string }) {
     const [file, setFile] = useState<File | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
@@ -94,10 +94,11 @@ export function PaymentUploadForm({ order, event }: { order: OrderData, event: E
                     <div className="flex justify-center">
                         <div className="relative w-64 h-64 border rounded-lg overflow-hidden">
                             <Image
-                                src="/payment-qr.jpg"
+                                src={qrCodeUrl}
                                 alt="Payment QR Code"
                                 fill
                                 className="object-cover"
+                                unoptimized
                             />
                         </div>
                     </div>

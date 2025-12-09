@@ -34,6 +34,15 @@ export default async function PaymentPage({
         .eq('id', id)
         .single()
 
+    // Get system QR code
+    const { data: qrSetting } = await supabase
+        .from('system_settings')
+        .select('value')
+        .eq('key', 'upi_qr_code_url')
+        .single()
+
+    const qrCodeUrl = qrSetting?.value || '/payment-qr.jpg'
+
     return (
         <div className="container mx-auto py-10 px-4">
             <div className="max-w-md mx-auto mb-8 text-center">
@@ -43,7 +52,7 @@ export default async function PaymentPage({
                 </p>
             </div>
 
-            <PaymentUploadForm order={order} event={event} />
+            <PaymentUploadForm order={order} event={event} qrCodeUrl={qrCodeUrl} />
         </div>
     )
 }

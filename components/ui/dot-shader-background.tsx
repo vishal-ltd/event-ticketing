@@ -141,22 +141,22 @@ function Scene() {
         }
     })
 
-     
+
     const dotMaterial = useMemo(() => {
         return new DotMaterial()
     }, [])
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         (dotMaterial as any).uniforms.dotColor.value.setHex(themeColors.dotColor.replace('#', '0x'));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         (dotMaterial as any).uniforms.bgColor.value.setHex(themeColors.bgColor.replace('#', '0x'));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         (dotMaterial as any).uniforms.dotOpacity.value = themeColors.dotOpacity
     }, [theme, dotMaterial, themeColors])
 
     useFrame((state) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         (dotMaterial as any).uniforms.time.value = state.clock.elapsedTime
     })
 

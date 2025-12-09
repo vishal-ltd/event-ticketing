@@ -41,11 +41,23 @@ export async function approveOrder(orderId: string) {
             .from('orders')
             .select(`
                 *,
-                events (title, event_date, venue),
-                user_profiles (email)
+                events (title, event_date, venue)
             `)
             .eq('id', orderId)
             .single()
+
+        if (orderError) throw orderError
+
+        // Fetch user email separately since there might be no direct FK between orders and user_profiles
+        let userEmail = null
+        if (order.user_id) {
+            const { data: userProfile } = await adminSupabase
+                .from('user_profiles')
+                .select('email')
+                .eq('id', order.user_id)
+                .single()
+            userEmail = userProfile?.email
+        }
 
         if (orderError) throw orderError
 
@@ -83,10 +95,10 @@ export async function approveOrder(orderId: string) {
         }
 
         // 5. Send Confirmation Email
-        if (order.user_profiles?.email) {
-            const ticketIds = tickets.map((t: any) => t.id.slice(0, 8)).join(', ')
+        if (userEmail) {
+            const ticketIds = tickets.map((t: { id: string }) => t.id.slice(0, 8)).join(', ')
             await sendTicketEmail({
-                to: order.user_profiles.email,
+                to: userEmail,
                 eventName: order.events?.title || 'Event',
                 ticketId: ticketIds,
                 amount: `₹${order.total_amount}`,
@@ -101,7 +113,18 @@ export async function approveOrder(orderId: string) {
 
     } catch (error: unknown) {
         console.error('Approval failed:', error)
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+        let errorMessage = 'Unknown error'
+        if (error instanceof Error) {
+            errorMessage = error.message
+        } else if (typeof error === 'string') {
+            errorMessage = error
+        } else {
+            try {
+                errorMessage = JSON.stringify(error)
+            } catch {
+                errorMessage = 'Unknown error (circular or unstringifiable)'
+            }
+        }
         return { success: false, error: errorMessage }
     }
 }

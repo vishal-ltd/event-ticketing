@@ -1,11 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { MoreHorizontal, Loader2, Shield, ShieldAlert, User } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { updateUserRole } from '@/app/actions/users'
 
 interface UserActionsProps {
@@ -15,8 +13,6 @@ interface UserActionsProps {
 
 export function UserActions({ userId, currentRole }: UserActionsProps) {
     const [isLoading, setIsLoading] = useState(false)
-    const router = useRouter()
-    const supabase = createClient()
 
 
 

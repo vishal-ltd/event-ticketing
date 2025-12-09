@@ -10,10 +10,19 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { AuthForm } from "./auth-form"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 export function UserAuthDialog() {
     const [open, setOpen] = useState(false)
+    const [isMounted, setIsMounted] = useState(false)
+
+    useEffect(() => {
+        setIsMounted(true)
+    }, [])
+
+    if (!isMounted) {
+        return null
+    }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
